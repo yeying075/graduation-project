@@ -1,0 +1,11 @@
+.build/*
+!.build
+!.build/test.js
+
+.husky
+
+#*.json
+#*.html
+#*rc.js
+#*.svg
+#*.css
