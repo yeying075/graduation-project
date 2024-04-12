@@ -1,7 +1,6 @@
 <script setup lang="ts">
 const handleClick = () => {
   router.push('/')
-
 }
 </script>
 

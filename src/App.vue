@@ -12,8 +12,6 @@ const locale = zhCn
 </template>
 
 <style>
-
-
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -23,9 +21,9 @@ const locale = zhCn
 }
 
 .el-dialog {
-
 }
-.insertDialog .el-dialog__body, .updateDialog .el-dialog__body {
+.insertDialog .el-dialog__body,
+.updateDialog .el-dialog__body {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -38,5 +36,4 @@ const locale = zhCn
   align-items: center;
   justify-content: center;
 }
-
 </style>
