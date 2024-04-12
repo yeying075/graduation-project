@@ -19,7 +19,7 @@ const data = ref([])
 const loading = ref(true)
 const project_name = ref()
 const title = ref()
-const professions = ref(['string'])
+const professions = ref([])
 const getData = async () => {
   const {
     data: { data: res }
@@ -166,10 +166,10 @@ const handleDialogOpened = async () => {
         <el-form-item class="item" :label="TAG.title" prop="title">
           <el-input v-model.trim="insertForm.title" />
         </el-form-item>
-        <el-form-item class="item" label="专业hash_id" prop="status">
+        <el-form-item class="item" label="专业id" prop="status">
           <el-input v-model.trim="insertForm.profession_hash_id" />
         </el-form-item>
-        <el-form-item class="item" label="" prop="status">
+        <el-form-item class="item" label="难度" prop="status">
           <el-select v-model="insertForm.difficulty">
             <el-option label="HARD" value="HARD" />
             <el-option label="EASY" value="EASY" />
