@@ -7,4 +7,4 @@ pinia.use(piniaPluginPersistedstate)
 
 export default pinia
 
-export * from './counter.js'
+export * from './identity'

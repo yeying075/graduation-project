@@ -1,7 +1,12 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const handleClick = () => {
+  router.push('/')
+
+}
+</script>
 
 <template>
-  <main>
-    <el-button type="primary" size="large">111</el-button>
-  </main>
+  <el-button id="my-button" type="primary" size="large" @click="handleClick">Main </el-button>
 </template>
+
+<style scoped lang="scss"></style>

@@ -19,10 +19,10 @@ module.exports = {
       {
         ignores: ['index']
       }
-    ]
+    ],
     // 'vue/no-setup-props-destructure': ['off']
 
-    // 'no-undef': false,
+    // 'no-undef': 'no'
 
     // 解决ESLint和Prettier的switch/case缩进冲突
     // indent: ["error", 2, { SwitchCase: 1 }],

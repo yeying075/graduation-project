@@ -9,15 +9,15 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
-    port: 7590,
-    proxy: {
-      '/api': {
-        target: 'http://127.0.0.1:7591/',
-        secure: true,
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
-      }
-    }
+    port: 7610,
+    // proxy: {
+    //   '/api': {
+    //     target: 'http://127.0.0.1:7611/',
+    //     secure: true,
+    //     changeOrigin: true,
+    //     rewrite: (path) => path.replace(/^\/api/, '')
+    //   }
+    // }
   },
   plugins: [
     vue(),
@@ -25,22 +25,15 @@ export default defineConfig({
       imports: [
         'vue',
         'vue-router',
-        'pinia'
-        // {
-        //   from: 'axios',
-        //   imports: [
-        //     ['default', 'axios'],
-        //     {
-        //       name: 'AxiosStatic',
-        //       type: true
-        //     }
-        //   ]
-        // }
+        'pinia',
+        '@vueuse/core'
       ],
-      // dirs: ['./src/apis/**', './src/router/', './src/stores/', './src/utils/'],
+      defaultExportByFilename: false,
+      dirs: ['./src/apis/', './src/router/', './src/pinia/', './src/utils/', './src/constant/'],
       // eslintrc: {
       //   enabled: true,
       // }
+      vueTemplate: true,
       resolvers: [ElementPlusResolver()]
     }),
     Components({
