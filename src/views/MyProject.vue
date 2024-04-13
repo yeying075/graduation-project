@@ -106,6 +106,7 @@ const handleFilter = () => {
 
 <template>
   <div class="block">
+    <el-button type="primary" size="large" @click="insertDialogVisible = true">添加项目</el-button>
     <el-table class="table" table-layout="auto" border :data="data" v-loading="loading">
       <el-table-column prop="project_name" :label="TAG.project_name">
         <template #default="scope">
