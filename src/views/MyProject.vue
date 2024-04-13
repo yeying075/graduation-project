@@ -24,12 +24,12 @@ const getData = async () => {
   const {
     data: { data: res }
   } = await req
-    .post(`/api/v1/project/list`, {
-      page: currentPage.value,
-      size: pageSize.value,
-      project_name: project_name.value,
-      title: title.value,
-      professions: professions.value
+    .post(`/api/v1/project/user/list`, {
+      // page: currentPage.value,
+      // size: pageSize.value,
+      // project_name: project_name.value,
+      // title: title.value,
+      // professions: professions.value
     })
     .then()
   data.value = res.projects
@@ -93,14 +93,6 @@ const dialogInputRef = ref()
 const handleDialogOpened = async () => {
   dialogInputRef.value.focus()
 }
-const handleMy = () => {
-  router.push('/main/project')
-}
-const handleChoose = (id) => {
-  req.post('/api/v1/project/choose', {
-    project_id: id
-  })
-}
 const filterForm = ref({})
 const filterDialogVisible = ref(false)
 const handleFilter = () => {
@@ -114,11 +106,10 @@ const handleFilter = () => {
 
 <template>
   <div class="block">
-    <el-button type="primary" size="large" @click="handleMy">我的</el-button>
     <el-table class="table" table-layout="auto" border :data="data" v-loading="loading">
       <el-table-column prop="project_name" :label="TAG.project_name">
         <template #default="scope">
-          <el-button @click="handleCheck(scope.row.id)">{{ scope.row.projectName }}</el-button>
+          <el-button @click="handleCheck(scope.row.id)">{{ scope.row.project_name }}</el-button>
         </template>
       </el-table-column>
       <el-table-column prop="title" :label="TAG.title"> </el-table-column>
@@ -144,8 +135,25 @@ const handleFilter = () => {
           <!--          </el-row>-->
         </template>
         <template #default="scope">
-          <el-button type="primary" size="default" @click="handleChoose(scope.row.id)"
-            >选择</el-button
+          <el-button type="primary" size="default" @click="handleUpdate(scope.row)"
+            >更改状态</el-button
+          >
+          <el-button
+            type="primary"
+            size="default"
+            @click="
+              () => {
+                ElMessage.success('成功')
+              }
+            "
+            >提交</el-button
+          >
+          <el-button
+            class="rightButton"
+            type="danger"
+            size="default"
+            @click="handleDelete(scope.row.id)"
+            >删除</el-button
           >
         </template>
       </el-table-column>

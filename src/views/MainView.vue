@@ -62,7 +62,7 @@ const handleCheck = async (e) => {
                 <span>用户</span>
               </div>
             </el-menu-item>
-            <el-menu-item index="/main/my-project">
+            <el-menu-item index="/main/project">
               <div>
                 <span>项目</span>
               </div>
