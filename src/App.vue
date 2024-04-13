@@ -7,11 +7,11 @@ const locale = zhCn
 
 <template>
   <el-config-provider :locale="locale">
-    <RouterView />
+    <RouterView/>
   </el-config-provider>
 </template>
 
-<style>
+<style scoped>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
