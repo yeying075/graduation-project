@@ -98,12 +98,27 @@ const SearchProject = async (queryString, cb) => {
   } = await req.post(`/api/v1/resume/project/tree`).then()
   cb(res)
 }
+const filterForm = ref({})
+const filterDialogVisible = ref(false)
+const handleFilter = () => {
+  resume_option.value = { ...filterForm.value }
+  // resume_option.value.title = [filterForm.value.title]
+  // resume_option.value.userName = [filterForm.value.userName]
+  // resume_option.value.startAt = [filterForm.value.startAt]
+  // resume_option.value.endAt = [filterForm.value.endAt]
+  getData()
+  filterDialogVisible.value = false
+}
 </script>
 
 <template>
   <div class="block">
+    <el-button type="primary" size="large" @click="insertDialogVisible = true">添加简历</el-button>
     <el-table class="table" table-layout="auto" border :data="data" v-loading="loading">
-      <el-table-column prop="resume_name" :label="TAG.resume_name" @click="handleCheck">
+      <el-table-column prop="resume_name" :label="TAG.resume_name">
+        <template #default="scope">
+          <el-button @click="handleCheck(scope.row.id)">{{ scope.row.resume_name }}</el-button>
+        </template>
       </el-table-column>
       <el-table-column prop="user_uid" :label="TAG.user_uid"> </el-table-column>
       <el-table-column prop="user_name" :label="TAG.user_name"> </el-table-column>
@@ -121,11 +136,14 @@ const SearchProject = async (queryString, cb) => {
           <!--              />-->
           <!--            </el-col>-->
           <!--            <el-col :span="6">-->
-          <el-button type="primary" size="default" @click="insertDialogVisible = true"
-            >新增</el-button
-          >
+          <!--          <el-button type="primary" size="default" @click="insertDialogVisible = true"-->
+          <!--            >新增</el-button-->
+          <!--          >-->
           <!--            </el-col>-->
           <!--          </el-row>-->
+          <el-button type="primary" size="default" @click="filterDialogVisible = true"
+            >筛选</el-button
+          >
         </template>
         <template #default="scope">
           <!--          <el-button type="primary" size="default" @click="handleUpdate(scope.row)">编辑</el-button>-->
@@ -284,6 +302,32 @@ const SearchProject = async (queryString, cb) => {
         {{ CheckForm.project_ids }}
       </el-descriptions-item>
     </el-descriptions>
+  </el-dialog>
+  <el-dialog
+    class="insertDialog"
+    title="筛选"
+    width="400px"
+    align-center
+    v-model="filterDialogVisible"
+  >
+    <el-form :model="filterForm" :rules="rules" label-width="80" status-icon hide-required-asterisk>
+      <el-form-item class="item" label="标题">
+        <el-input v-model.trim="filterForm.title" />
+      </el-form-item>
+      <el-form-item class="item" label="用户名">
+        <el-input v-model.trim="filterForm.userName" />
+      </el-form-item>
+      <el-form-item class="item" label="startAt">
+        <el-input v-model.trim="filterForm.startAt" />
+      </el-form-item>
+      <el-form-item class="item" label="endAt">
+        <el-input v-model.trim="filterForm.endAt" />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="handleFilter">提交</el-button>
+        <el-button @click="filterDialogVisible = false">取消</el-button>
+      </el-form-item>
+    </el-form>
   </el-dialog>
 </template>
 

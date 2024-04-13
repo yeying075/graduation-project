@@ -38,10 +38,10 @@ onMounted(() => {
 
 <template>
   <div class="block">
-    <el-card class="box-card" shadow="hover">
+    <el-card class="box-card" shadow="">
       <template #header>
         <div class="card-header">
-          <el-text type=""> {{ PROJECT_NAME }} </el-text>
+          <span> {{ PROJECT_NAME }} </span>
         </div>
       </template>
       <div id="top">
@@ -67,7 +67,7 @@ onMounted(() => {
             />
           </el-col>
           <el-col :span="12">
-            <img :src="img" @click="getCode" />
+            <img :src="img" @click="getCode" style="background-color: white" />
           </el-col>
         </el-row>
       </div>
@@ -82,6 +82,10 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .block {
+  background-image: url('public/0164be59759829a8012193a307b07f.png@2o.png');
+  background-size: cover;
+}
+.block {
   height: 100%;
   display: flex;
   align-items: center;
@@ -89,11 +93,23 @@ onMounted(() => {
   background-color: #f7f8fa;
 }
 
+:deep(.el-card__header) {
+  border: 0;
+}
+:deep(.el-card__footer) {
+  border: 0;
+}
 .box-card {
   height: 400px;
   width: 480px;
   position: relative;
   bottom: 50px;
+  font-size: 30px;
+  font-weight: bold;
+  //color: black;
+  border: 1px solid transparent;
+  //box-shadow: 5px 5px 0 0 rgba(0, 0, 0, 0.2);
+  background-color: transparent;
 }
 
 #top > .el-input {

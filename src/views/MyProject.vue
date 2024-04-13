@@ -1,11 +1,9 @@
 <script setup lang="ts">
 const TAG = {
-  TITLE: '面试',
-  ttile: '标题',
-  interviewee: '被面试人',
-  interviewee_uid: '被面试人id',
-  creator: '创建人',
-  creator_uid: '创建人id'
+  TITLE: '项目',
+  project_name: '名称',
+  title: '标题',
+  status: '状态'
 }
 
 const rules = {}
@@ -19,23 +17,23 @@ const pageSize = ref(10)
 const total = ref(0)
 const data = ref([])
 const loading = ref(true)
+const project_name = ref()
 const title = ref()
-const interviewee_uid = ref()
-const creator_uid = ref()
+const professions = ref([])
 const getData = async () => {
   const {
     data: { data: res }
   } = await req
-    .post(`/api/v1/interview/list`, {
+    .post(`/api/v1/project/list`, {
       page: currentPage.value,
       size: pageSize.value,
+      project_name: project_name.value,
       title: title.value,
-      interviewee_id: interviewee_uid.value,
-      creator_uid: creator_uid.value
+      professions: professions.value
     })
     .then()
-  data.value = res.data
-  total.value = res.total
+  data.value = res.projects
+  total.value = res.count
 }
 onMounted(async () => {
   await getData()
@@ -45,7 +43,7 @@ onMounted(async () => {
 const insertDialogVisible = ref(false)
 const insertForm = ref({})
 const handleConfirmInsert = async () => {
-  await req.post(`/api/v1/interview`, insertForm.value)
+  await req.post(`/api/v1/project`, insertForm.value)
   await getData()
   insertDialogVisible.value = false
 }
@@ -57,7 +55,7 @@ const handleUpdate = async (form) => {
   updateDialogVisible.value = true
 }
 const handleConfirmUpdate = async () => {
-  await req.put(`/api/v1/interview/change`, updateForm.value)
+  await req.put(`/api/v1/project/changeStatus`, updateForm.value)
   await getData()
   updateDialogVisible.value = false
 }
@@ -69,7 +67,7 @@ const handleDelete = async (id) => {
   deleteDialogVisible.value = true
 }
 const handleConfirmDelete = async () => {
-  await req.delete(`/api/v1/interview`, {
+  await req.delete(`/api/v1/project`, {
     data: {
       id: deleteId.value
     }
@@ -78,13 +76,11 @@ const handleConfirmDelete = async () => {
   deleteDialogVisible.value = false
 }
 const dialogVisibleCheck = ref(false)
-const CheckForm = ref({
-  info: {}
-})
+const CheckForm = ref({})
 const handleCheck = async (id) => {
   const {
     data: { data: res }
-  } = await req.post(`/api/v1/interview/${id}/detail`).then()
+  } = await req.post(`/api/v1/project/detail`).then()
   CheckForm.value = res.data
   dialogVisibleCheck.value = true
 }
@@ -97,12 +93,20 @@ const dialogInputRef = ref()
 const handleDialogOpened = async () => {
   dialogInputRef.value.focus()
 }
+const handleMy = () => {
+  router.push('/main/project')
+}
+const handleChoose = (id) => {
+  req.post('/api/v1/project/choose', {
+    project_id: id
+  })
+}
 const filterForm = ref({})
 const filterDialogVisible = ref(false)
 const handleFilter = () => {
-  title.value = [filterForm.value.title]
-  interviewee_uid.value = [filterForm.value.interviewee_uid]
-  creator_uid.value = [filterForm.value.creator_uid]
+  // project_name.value = [filterForm.value.project_name]
+  // title.value = [filterForm.value.title]
+  // professions.value = [filterForm.value.professions]
   getData()
   filterDialogVisible.value = false
 }
@@ -110,17 +114,15 @@ const handleFilter = () => {
 
 <template>
   <div class="block">
-    <el-button type="primary" size="large" @click="insertDialogVisible = true">添加面试</el-button>
+    <el-button type="primary" size="large" @click="handleMy">我的</el-button>
     <el-table class="table" table-layout="auto" border :data="data" v-loading="loading">
-      <el-table-column prop="ttile" :label="TAG.ttile" @click="handleCheck">
+      <el-table-column prop="project_name" :label="TAG.project_name">
         <template #default="scope">
-          <el-button @click="handleCheck(scope.row.id)">{{ scope.row.ttile }}</el-button>
+          <el-button @click="handleCheck(scope.row.id)">{{ scope.row.projectName }}</el-button>
         </template>
       </el-table-column>
-      <el-table-column prop="interviewee" :label="TAG.interviewee"> </el-table-column>
-      <el-table-column prop="interviewee_uid" :label="TAG.interviewee_uid"> </el-table-column>
-      <el-table-column prop="creator" :label="TAG.creator"> </el-table-column>
-      <el-table-column prop="creator_uid" :label="TAG.creator_uid"> </el-table-column>
+      <el-table-column prop="title" :label="TAG.title"> </el-table-column>
+      <el-table-column prop="status" :label="TAG.status"> </el-table-column>
       <el-table-column align="right">
         <template #header>
           <!--          <el-row justify="end" class="colRight">-->
@@ -140,18 +142,10 @@ const handleFilter = () => {
           <!--          >-->
           <!--            </el-col>-->
           <!--          </el-row>-->
-          <el-button type="primary" size="default" @click="filterDialogVisible = true"
-            >筛选</el-button
-          >
         </template>
         <template #default="scope">
-          <el-button type="primary" size="default" @click="handleUpdate(scope.row)">编辑</el-button>
-          <el-button
-            class="rightButton"
-            type="danger"
-            size="default"
-            @click="handleDelete(scope.row.id)"
-            >删除</el-button
+          <el-button type="primary" size="default" @click="handleChoose(scope.row.id)"
+            >选择</el-button
           >
         </template>
       </el-table-column>
@@ -182,23 +176,27 @@ const handleFilter = () => {
         status-icon
         hide-required-asterisk
       >
-        <el-form-item class="item" :label="TAG.ttile" prop="ttile">
+        <el-form-item class="item" :label="TAG.project_name" prop="project_name">
+          <el-input v-model.trim="insertForm.project_name" />
+        </el-form-item>
+        <el-form-item class="item" :label="TAG.title" prop="title">
           <el-input v-model.trim="insertForm.title" />
         </el-form-item>
-        <el-form-item class="item" label="内容" prop="interviewee">
-          <el-input v-model.trim="insertForm.content" />
+        <el-form-item class="item" label="专业id" prop="status">
+          <el-input v-model.trim="insertForm.profession_hash_id" />
         </el-form-item>
-        <el-form-item class="item" :label="TAG.interviewee_uid" prop="interviewee_uid">
-          <el-input v-model.trim="insertForm.interviewee_uid" />
+        <el-form-item class="item" label="难度" prop="status">
+          <el-select v-model="insertForm.difficulty">
+            <el-option label="HARD" value="HARD" />
+            <el-option label="EASY" value="EASY" />
+            <el-option label="NORMAL" value="NORMAL" />
+          </el-select>
         </el-form-item>
-        <el-form-item class="item" label="日期" prop="creator">
-          <el-input v-model.trim="insertForm.date" />
+        <el-form-item class="item" label="背景描述" prop="status">
+          <el-input v-model.trim="insertForm.back_ground" />
         </el-form-item>
-        <el-form-item class="item" label="职位" prop="creator">
-          <el-input v-model.trim="insertForm.position" />
-        </el-form-item>
-        <el-form-item class="item" label="地点" prop="creator_uid">
-          <el-input v-model.trim="insertForm.location" />
+        <el-form-item class="item" label="需求描述" prop="status">
+          <el-input v-model.trim="insertForm.requirement" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handleConfirmInsert">提交</el-button>
@@ -221,7 +219,7 @@ const handleFilter = () => {
         status-icon
         hide-required-asterisk
       >
-        <el-form-item class="item" label="状态" prop="ttile">
+        <el-form-item class="item" :label="TAG.status" prop="status">
           <el-input v-model.trim="updateForm.status" />
         </el-form-item>
         <el-form-item>
@@ -254,62 +252,86 @@ const handleFilter = () => {
     align-center
     v-model="dialogVisibleCheck"
   >
-    <el-descriptions title="面试" :column="3" size="" border>
+    <el-descriptions :title="TAG.TITLE" :column="3" size="" border>
       <template #title>
-        <div class="checkDescriptionsTitle">面试</div>
+        <div class="checkDescriptionsTitle">{{ TAG.TITLE }}</div>
       </template>
-      <el-descriptions-item :label="TAG.ttile">
+      <el-descriptions-item :label="TAG.project_name">
+        {{ CheckForm.projectName }}
+      </el-descriptions-item>
+      <el-descriptions-item :label="TAG.title">
         {{ CheckForm.title }}
       </el-descriptions-item>
-      <el-descriptions-item :label="TAG.interviewee">
-        {{ CheckForm.interviewee }}
-      </el-descriptions-item>
-      <el-descriptions-item label="联系信息">
-        {{ CheckForm.info.contact_info }}
-      </el-descriptions-item>
-      <el-descriptions-item label="内容">
-        {{ CheckForm.info.content }}
-      </el-descriptions-item>
-      <el-descriptions-item label="创建者">
-        {{ CheckForm.info.creator }}
-      </el-descriptions-item>
-      <el-descriptions-item label="日期">
-        {{ CheckForm.info.date }}
-      </el-descriptions-item>
-      <el-descriptions-item label="地点">
-        {{ CheckForm.info.location }}
-      </el-descriptions-item>
-      <el-descriptions-item label="职位">
-        {{ CheckForm.info.position }}
-      </el-descriptions-item>
-      <el-descriptions-item label="状态">
+      <el-descriptions-item :label="TAG.status">
         {{ CheckForm.status }}
+      </el-descriptions-item>
+      <el-descriptions-item label="难易程度">
+        {{ CheckForm.projectBasicInfo.difficulty }}
+      </el-descriptions-item>
+      <el-descriptions-item label="背景描述">
+        {{ CheckForm.projectBasicInfo.back_ground }}
+      </el-descriptions-item>
+      <el-descriptions-item label="需求描述">
+        {{ CheckForm.projectBasicInfo.requirement }}
+      </el-descriptions-item>
+      <el-descriptions-item label="专业名称">
+        {{ CheckForm.professionName }}
+      </el-descriptions-item>
+      <el-descriptions-item
+        label="学院名称
+"
+      >
+        {{ CheckForm.collegeName }}
+      </el-descriptions-item>
+      <el-descriptions-item label="创作者名称">
+        {{ CheckForm.creator }}
+      </el-descriptions-item>
+      <el-descriptions-item label="审核者名称">
+        {{ CheckForm.auditor }}
+      </el-descriptions-item>
+      <el-descriptions-item label="学生名称">
+        {{ CheckForm.participator }}
+      </el-descriptions-item>
+      <el-descriptions-item label="学生所在班级">
+        {{ CheckForm.participatorClassName }}
+      </el-descriptions-item>
+      <el-descriptions-item label="班级id">
+        {{ CheckForm.participatorClassID }}
       </el-descriptions-item>
     </el-descriptions>
   </el-dialog>
-  <el-dialog
-    class="insertDialog"
-    title="筛选"
-    width="400px"
-    align-center
-    v-model="filterDialogVisible"
-  >
-    <el-form :model="filterForm" :rules="rules" label-width="80" status-icon hide-required-asterisk>
-      <el-form-item class="item" label="标题">
-        <el-input v-model.trim="filterForm.title" />
-      </el-form-item>
-      <el-form-item class="item" label="面试者uid">
-        <el-input v-model.trim="filterForm.interviewee_uid" />
-      </el-form-item>
-      <el-form-item class="item" label="创建者id">
-        <el-input v-model.trim="filterForm.creator_uid" />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="handleFilter">提交</el-button>
-        <el-button @click="filterDialogVisible = false">取消</el-button>
-      </el-form-item>
-    </el-form>
-  </el-dialog>
+  <!--  <el-dialog-->
+  <!--    class="insertDialog"-->
+  <!--    title="筛选"-->
+  <!--    width="400px"-->
+  <!--    align-center-->
+  <!--    v-model="filterDialogVisible"-->
+  <!--  >-->
+  <!--    <el-form :model="filterForm" :rules="rules" label-width="80" status-icon hide-required-asterisk>-->
+  <!--      <el-form-item class="item" label="专业">-->
+  <!--        <el-autocomplete-->
+  <!--          v-model="filterForm.profession_hash_id"-->
+  <!--          :fetch-suggestions="SearchProfession"-->
+  <!--          value-key="hash_id"-->
+  <!--        >-->
+  <!--          <template #default="{ item }">-->
+  <!--            <div>{{ item.hash_id }}</div>-->
+  <!--            <span>{{ item.profession_name }}</span>-->
+  <!--          </template>-->
+  <!--        </el-autocomplete>-->
+  <!--      </el-form-item>-->
+  <!--      <el-form-item class="item" label="项目名称">-->
+  <!--        <el-input v-model.trim="filterForm.project_name" />-->
+  <!--      </el-form-item>-->
+  <!--      <el-form-item class="item" label="项目名称">-->
+  <!--        <el-input v-model.trim="filterForm.professions" />-->
+  <!--      </el-form-item>-->
+  <!--      <el-form-item>-->
+  <!--        <el-button type="primary" @click="handleFilter">提交</el-button>-->
+  <!--        <el-button @click="filterDialogVisible = false">取消</el-button>-->
+  <!--      </el-form-item>-->
+  <!--    </el-form>-->
+  <!--  </el-dialog>-->
 </template>
 
 <style scoped>

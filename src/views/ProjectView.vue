@@ -93,12 +93,26 @@ const dialogInputRef = ref()
 const handleDialogOpened = async () => {
   dialogInputRef.value.focus()
 }
+
+const filterForm = ref({})
+const filterDialogVisible = ref(false)
+const handleFilter = () => {
+  project_name.value = [filterForm.value.project_name]
+  title.value = [filterForm.value.title]
+  professions.value = [filterForm.value.professions]
+  getData()
+  filterDialogVisible.value = false
+}
 </script>
 
 <template>
   <div class="block">
+    <el-button type="primary" size="large" @click="insertDialogVisible = true">添加项目</el-button>
     <el-table class="table" table-layout="auto" border :data="data" v-loading="loading">
-      <el-table-column prop="project_name" :label="TAG.project_name" @click="handleCheck">
+      <el-table-column prop="project_name" :label="TAG.project_name">
+        <template #default="scope">
+          <el-button @click="handleCheck(scope.row.id)">{{ scope.row.projectName }}</el-button>
+        </template>
       </el-table-column>
       <el-table-column prop="title" :label="TAG.title"> </el-table-column>
       <el-table-column prop="status" :label="TAG.status"> </el-table-column>
@@ -116,14 +130,29 @@ const handleDialogOpened = async () => {
           <!--              />-->
           <!--            </el-col>-->
           <!--            <el-col :span="6">-->
-          <el-button type="primary" size="default" @click="insertDialogVisible = true"
-            >新增</el-button
-          >
+          <!--          <el-button type="primary" size="default" @click="insertDialogVisible = true"-->
+          <!--            >新增</el-button-->
+          <!--          >-->
           <!--            </el-col>-->
           <!--          </el-row>-->
+          <el-button type="primary" size="default" @click="filterDialogVisible = true"
+            >筛选</el-button
+          >
         </template>
         <template #default="scope">
-          <el-button type="primary" size="default" @click="handleUpdate(scope.row)">编辑</el-button>
+          <el-button type="primary" size="default" @click="handleUpdate(scope.row)"
+            >更改状态</el-button
+          >
+          <el-button
+            type="primary"
+            size="default"
+            @click="
+              () => {
+                ElMessage.success('成功')
+              }
+            "
+            >提交</el-button
+          >
           <el-button
             class="rightButton"
             type="danger"
@@ -283,6 +312,39 @@ const handleDialogOpened = async () => {
         {{ CheckForm.participatorClassID }}
       </el-descriptions-item>
     </el-descriptions>
+  </el-dialog>
+
+  <el-dialog
+    class="insertDialog"
+    title="筛选"
+    width="400px"
+    align-center
+    v-model="filterDialogVisible"
+  >
+    <el-form :model="filterForm" :rules="rules" label-width="80" status-icon hide-required-asterisk>
+      <!--      <el-form-item class="item" label="专业">-->
+      <!--        <el-autocomplete-->
+      <!--          v-model="filterForm.profession_hash_id"-->
+      <!--          :fetch-suggestions="SearchProfession"-->
+      <!--          value-key="hash_id"-->
+      <!--        >-->
+      <!--          <template #default="{ item }">-->
+      <!--            <div>{{ item.hash_id }}</div>-->
+      <!--            <span>{{ item.profession_name }}</span>-->
+      <!--          </template>-->
+      <!--        </el-autocomplete>-->
+      <!--      </el-form-item>-->
+      <el-form-item class="item" label="项目名称">
+        <el-input v-model.trim="filterForm.project_name" />
+      </el-form-item>
+      <el-form-item class="item" label="项目标题">
+        <el-input v-model.trim="filterForm.title" />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="handleFilter">提交</el-button>
+        <el-button @click="filterDialogVisible = false">取消</el-button>
+      </el-form-item>
+    </el-form>
   </el-dialog>
 </template>
 

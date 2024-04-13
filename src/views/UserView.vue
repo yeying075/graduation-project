@@ -151,7 +151,7 @@ const handleCheck = async (id) => {
     data: { data: res }
   } = await getByIdUserAPI(id)
   console.log(res)
-  // CheckForm.value =
+  CheckForm.value = res
   dialogVisibleCheck.value = true
 }
 
@@ -260,6 +260,10 @@ const handleConfirmReset = async () => {
   console.log(resetId.value, resetPassword.value)
   await resetAPI(resetId.value, resetPassword.value)
   resetDialogVisible.value = false
+}
+const fileList = ref([])
+const handleExceed = (files, uploadFiles) => {
+  ElMessage.warning('最多上传1个文件')
 }
 </script>
 
@@ -403,6 +407,18 @@ const handleConfirmReset = async () => {
         <el-form-item class="item" :label="TAG.email">
           <el-input v-model.trim="insertForm.email" @keyup.enter="handleConfirmInsert" />
         </el-form-item>
+        <!--        <el-form-item>-->
+        <!--          <el-upload-->
+        <!--            ref="upload"-->
+        <!--            class="upload"-->
+        <!--            v-model:file-list="fileList"-->
+        <!--            action=""-->
+        <!--            :on-exceed="handleExceed"-->
+        <!--          >-->
+        <!--            &lt;!&ndash;      v-model:file-list="fileList" multiple :limit="3"&ndash;&gt;-->
+        <!--            <el-button type="primary" size="large">上传文件</el-button>-->
+        <!--          </el-upload>-->
+        <!--        </el-form-item>-->
         <el-form-item>
           <el-button type="primary" @click="handleConfirmInsert">提交</el-button>
           <el-button @click="insertDialogVisible = false">取消</el-button>
@@ -494,20 +510,35 @@ const handleConfirmReset = async () => {
         <template #title>
           <div class="checkDescriptionsTitle">用户</div>
         </template>
+        <el-descriptions-item label="uid">
+          {{ CheckForm.uid }}
+        </el-descriptions-item>
         <el-descriptions-item :label="TAG.username">
           {{ CheckForm.username }}
         </el-descriptions-item>
         <el-descriptions-item :label="TAG.name">
           {{ CheckForm.name }}
         </el-descriptions-item>
+        <el-descriptions-item :label="TAG.role">
+          {{ CheckForm.role }}
+        </el-descriptions-item>
+        <el-descriptions-item label="专业id">
+          {{ CheckForm.class_name }}
+        </el-descriptions-item>
         <el-descriptions-item :label="TAG.profession_name">
           {{ CheckForm.profession_name }}
+        </el-descriptions-item>
+        <el-descriptions-item label="班级id">
+          {{ CheckForm.class_hash_id }}
         </el-descriptions-item>
         <el-descriptions-item :label="TAG.class_name">
           {{ CheckForm.class_name }}
         </el-descriptions-item>
         <el-descriptions-item :label="TAG.role">
-          {{ CheckForm.role }}
+          {{ CheckForm.Phone }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="TAG.role">
+          {{ CheckForm.Emial }}
         </el-descriptions-item>
       </el-descriptions>
     </el-dialog>

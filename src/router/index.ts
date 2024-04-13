@@ -43,6 +43,11 @@ const router = createRouter({
           path: 'interview',
           name: 'interview',
           component: () => import('@/views/InterviewView.vue')
+        },
+        {
+          path: 'my-project',
+          name: 'my-project',
+          component: () => import('@/views/MyProject.vue')
         }
       ]
     }
