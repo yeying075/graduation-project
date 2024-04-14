@@ -28,8 +28,8 @@ const handleLogin = async () => {
     })
     .finally(() => {
       loading.close()
+      getCode()
     })
-  getCode()
 }
 onMounted(() => {
   getCode()

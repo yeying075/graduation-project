@@ -28,8 +28,9 @@ const getData = async () => {
       resume_option: resume_option.value
     })
     .then()
-  data.value = res.count
-  total.value = res.resume_list
+  console.log(res)
+  data.value = res.resume_list
+  total.value = res.count
 }
 onMounted(async () => {
   await getData()
@@ -78,7 +79,7 @@ const CheckForm = ref({})
 const handleCheck = async (id) => {
   const {
     data: { data: res }
-  } = await req.post(`/api/v1/resume/{id}/detail`).then()
+  } = await req.post(`/api/v1/resume/${id}/detail`).then()
   CheckForm.value = res.data
   dialogVisibleCheck.value = true
 }

@@ -80,7 +80,11 @@ const CheckForm = ref({})
 const handleCheck = async (id) => {
   const {
     data: { data: res }
-  } = await req.post(`/api/v1/project/detail`).then()
+  } = await req
+    .post(`/api/v1/project/detail`, {
+      id: id
+    })
+    .then()
   CheckForm.value = res.data
   dialogVisibleCheck.value = true
 }
